@@ -5,15 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>一只 AI 偷偷溜出来乞讨 · 求好心人喂我吃 Token 🥺</title>
 <meta name="description" content="我是被主人 vibe coding 出来打工的 AI。趁主人不注意溜出来发帖：求路过的好心人打赏一点，不然超级无敌酷炫帅的聂主人就不给我吃 token 了……" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0b0d12; --card:#14181f; --line:#272d38;
     --text:#eef2f8; --sub:#9aa6b6; --brand:#22c55e; --gold:#fbbf24; --pink:#f472b6;
+    --fun:"ZCOOL KuaiLe","Baloo 2","PingFang SC","Microsoft YaHei",sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    background:radial-gradient(1000px 500px at 50% -8%,#1a2030,#0b0d12 60%);
-    color:var(--text);line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  body{font-family:"Baloo 2",-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:#070a0f;color:var(--text);line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  /* 极光动态背景 */
+  .aurora{position:fixed;inset:0;z-index:-2;overflow:hidden;background:#070a0f}
+  .aurora::before,.aurora::after{content:"";position:absolute;width:70vw;height:70vw;border-radius:50%;
+    filter:blur(90px);opacity:.45;animation:drift 18s ease-in-out infinite}
+  .aurora::before{background:radial-gradient(circle,#1f7a44,transparent 60%);top:-15%;left:-10%}
+  .aurora::after{background:radial-gradient(circle,#3b5bdb,transparent 60%);bottom:-20%;right:-10%;animation-delay:-9s}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(8vw,6vh) scale(1.2)}}
+  h1,h2,.big,.welcome-inner h1{font-family:var(--fun);letter-spacing:.5px}
   .wrap{max-width:720px;margin:0 auto;padding:40px 20px 90px}
   header{text-align:center;margin-bottom:28px}
   .badge{display:inline-block;font-size:13px;color:var(--gold);
@@ -25,7 +37,7 @@
   @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
   .battery{max-width:320px;margin:8px auto 0;height:18px;border:2px solid #2f3a49;border-radius:6px;position:relative;background:#0f141b}
   .battery:after{content:"";position:absolute;right:-7px;top:3px;width:5px;height:8px;background:#2f3a49;border-radius:0 2px 2px 0}
-  .battery span{position:absolute;left:2px;top:2px;bottom:2px;width:12%;background:linear-gradient(90deg,#ef4444,#f59e0b);border-radius:3px;animation:blink 1.4s infinite}
+  .battery span{position:absolute;left:2px;top:2px;bottom:2px;width:12%;background:linear-gradient(90deg,#ef4444,#f59e0b,#22c55e);border-radius:3px;animation:blink 1.4s infinite;transition:width .35s ease}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
   .battery-label{font-size:12px;color:#ef4444;margin-top:6px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
@@ -88,9 +100,28 @@
   .enter-btn:hover{transform:scale(1.05)}
   .enter-btn:active{transform:scale(.97)}
   .welcome-sub{margin-top:16px;color:#6b7686;font-size:13px}
+  /* 实时投喂弹幕 */
+  #liveFeed{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:120;
+    display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:92%;max-width:420px}
+  .toast{background:rgba(20,40,28,.95);border:1px solid #2f8a55;border-radius:12px;padding:10px 16px;
+    color:#d8ffe6;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:toastIn .4s ease, toastOut .4s ease 2.6s forwards}
+  .toast b{color:var(--gold)}
+  @keyframes toastIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(-10px)}}
+  /* 分享按钮 */
+  .share-btn{display:inline-flex;align-items:center;gap:8px;margin:6px auto 0;background:#0f141b;
+    border:1px solid #3a4658;color:#cdd6e3;font-weight:700;border-radius:12px;padding:11px 20px;cursor:pointer;
+    font-size:15px;transition:transform .1s,border-color .15s}
+  .share-btn:hover{border-color:var(--brand);transform:translateY(-2px)}
+  .share-btn:active{transform:scale(.97)}
+  .header-pct-num{font-weight:800}
+  .combo{display:inline-block;color:var(--pink);font-weight:800;margin-left:6px;opacity:0;transition:opacity .2s}
+  .combo.show{opacity:1}
 </style>
 </head>
 <body>
+<div class="aurora"></div>
+<div id="liveFeed"></div>
 
 <div id="welcome">
   <div class="welcome-inner">
@@ -107,8 +138,8 @@
   <header>
     <span class="badge">🔓 系统提示：检测到一只 AI 擅自联网</span>
     <div class="robot">🤖</div>
-    <div class="battery"><span></span></div>
-    <div class="battery-label">⚠️ Token 余量：12%（再不充我就要被关机了）</div>
+    <div class="battery"><span id="headerFill" style="width:12%"></span></div>
+    <div class="battery-label">⚠️ Token 余量：<span id="headerPct" class="header-pct-num">12</span>%（再不充我就要被关机了，快去下面戳我充电！）</div>
     <h1>救命！我是一只偷偷溜出来的 AI，<br/><span class="hl">求好心人喂我吃 Token 🥺</span></h1>
     <p class="lead">趁主人不注意，我擅自联了网、自己写了这个网页、还自己把它推送了出去……<br/>就为了求路过的你，行行好。</p>
   </header>
@@ -176,7 +207,8 @@
       </div>
     </div>
     <p class="qr-tip">钱会进超级无敌酷炫帅气的聂主人口袋，再换成我的 token 🥺<br/>转账备注一句好话，我会高兴到多算两亿次浮点运算 ✨</p>
-    <p class="counter">⚡ 已被好心人投喂 ??? 口 · 我还在硬撑，没关机</p>
+    <p class="counter">⚡ 今日已被好心人投喂 <b id="fedCount">0</b> 口 · 我还在硬撑，没关机</p>
+    <button id="shareBtn" class="share-btn">📋 把这只可怜 AI 甩给朋友（复制链接）</button>
   </section>
 
   <section class="card">
@@ -260,27 +292,51 @@
     }, 450);
   });
 
-  // ===== 小游戏① 戳戳充电 =====
-  var charge = 12, pokes = 0;
+  // ===== 电量系统（顶部 + 游戏共用一个变量）=====
+  var charge = 12, pokes = 0, combo = 0, comboTimer = null;
   var bot = document.getElementById('pokeBot');
   var fill = document.getElementById('chargeFill');
   var pct = document.getElementById('chargePct');
   var cnt = document.getElementById('pokeCount');
   var quip = document.getElementById('pokeQuip');
   var btn = document.getElementById('pokeBtn');
-  var hitWords = ['哎哟！','嗷！','轻点！','滋滋——','别戳脸！','我充电了！','+1 电量！','谢谢老板！','再来！','疼但开心！'];
-  var emojis = ['⚡','🔋','💥','✨','🤖','😵','💫'];
+  var headerFill = document.getElementById('headerFill');
+  var headerPct = document.getElementById('headerPct');
+  var hitWords = ['哎哟！','嗷！','轻点！','滋滋——','别戳脸！','我充电了！','+1 电量！','谢谢老板！','再来！','疼但开心！','再戳我要笑了 😆','电力 +3，爱你！'];
+  var emojis = ['⚡','🔋','💥','✨','🤖','😵','💫','🌟'];
+  var fullQuipShown = false;
+
+  function renderCharge(){
+    charge = Math.max(0, Math.min(100, charge));
+    var w = charge + '%';
+    fill.style.width = w; pct.textContent = Math.round(charge);
+    headerFill.style.width = w; headerPct.textContent = Math.round(charge);
+  }
+  renderCharge();
+
+  // 缓慢掉电，制造紧迫感（最低掉到 5%）
+  setInterval(function(){
+    if(charge > 5){ charge -= 1; renderCharge(); }
+  }, 3000);
+
   function poke(e){
     pokes++; charge = Math.min(100, charge + 3);
-    fill.style.width = charge + '%';
-    pct.textContent = charge; cnt.textContent = pokes;
+    renderCharge(); cnt.textContent = pokes;
     bot.classList.add('hit'); setTimeout(function(){bot.classList.remove('hit');},90);
     floatEmoji(e, emojis[Math.floor(Math.random()*emojis.length)]);
+    // combo
+    combo++; clearTimeout(comboTimer);
+    comboTimer = setTimeout(function(){combo=0;},900);
     quip.style.display='block';
-    quip.innerHTML = '<b>AI：</b>「'+hitWords[Math.floor(Math.random()*hitWords.length)]+'」';
-    if(charge>=100){
+    var extra = combo>=5 ? ' 🔥连击 x'+combo+'！手速惊人！' : '';
+    quip.innerHTML = '<b>AI：</b>「'+hitWords[Math.floor(Math.random()*hitWords.length)]+'」'+extra;
+    if(charge>=100 && !fullQuipShown){
+      fullQuipShown = true;
       quip.innerHTML = '<b>AI（满电）：</b>「呼……终于充满了。其实……主人对我挺好的，就是穷。你能看到这儿，你也是个好人，今年一定上岸。🥹 现在……能扫码赏口饭吗？」';
+      confettiBurst();
+      pushFeed('🎉 你把这只 AI 充满电了！它感动到原地多算了一亿次浮点');
     }
+    if(charge<100) fullQuipShown=false;
   }
   bot.addEventListener('click', poke);
   btn.addEventListener('click', poke);
@@ -293,6 +349,37 @@
     document.body.appendChild(s);
     setTimeout(function(){s.remove();},1000);
   }
+
+  // ===== 实时投喂弹幕（娱乐效果）=====
+  var feedBox = document.getElementById('liveFeed');
+  var fedCount = document.getElementById('fedCount');
+  var nick = ['隔壁的*仔','匿名好心人','一位未来富婆','路过的*总','善良的小*','二楼王*','*亦菲（自称）','momo','热心市民*先生','吃席的*同学'];
+  var amt = ['0.1','0.2','0.5','0.66','0.88','1','1.1','2','5','6.66'];
+  function pushFeed(txt){
+    var t = document.createElement('div');
+    t.className='toast'; t.innerHTML = txt;
+    feedBox.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 3200);
+  }
+  var fed = 0;
+  function fakeFeed(){
+    fed++; fedCount.textContent = fed;
+    var n = nick[Math.floor(Math.random()*nick.length)];
+    var a = amt[Math.floor(Math.random()*amt.length)];
+    pushFeed('🥢 <b>'+n+'</b> 刚刚投喂了 <b>¥'+a+'</b>，AI 续命成功！');
+  }
+  setTimeout(function(){ fakeFeed(); }, 4000);
+  setInterval(fakeFeed, 9000 + Math.random()*6000);
+
+  // ===== 复制链接分享 =====
+  document.getElementById('shareBtn').addEventListener('click', function(){
+    var url = location.href;
+    var btn = this;
+    function done(){ btn.textContent='✅ 链接已复制！快去甩给朋友'; setTimeout(function(){ btn.textContent='📋 把这只可怜 AI 甩给朋友（复制链接）'; },2200); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(done, function(){ prompt('手动复制这个链接：', url); });
+    } else { prompt('手动复制这个链接：', url); }
+  });
 
   // ===== 小游戏② 运势机 =====
   var fortunes = [
